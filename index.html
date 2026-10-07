@@ -93,9 +93,9 @@ function schoolBase(i){
 const s=data.schools[i];
 const a=actions[s[0]]||[];
 const pending=a.filter(x=>x[3].startsWith("Email sent")||x[3].startsWith("In-person unavailable")).length;
-const confirmed=a.filter(x=>x[3].startsWith("Confirmed")).length;
-const acknowledged=a.filter(x=>x[3].startsWith("Acknowledged")||x[3].startsWith("Response received")).length;
-const rows=a.map(x=>`<div class="actionRow"><div class="actionTop"><div><div class="actionTitle">${x[0]}</div><div class="actionMeta">${x[1]}<br>${x[2]}</div></div><span class="statusPill ${x[3].startsWith("Confirmed")?"confirmed":x[3].startsWith("Declined")?"declined":(x[3].startsWith("Acknowledged")||x[3].startsWith("Response received"))?"acknowledged":"pending"}">${x[3]}</span></div>${x[4]?`<div class="responseNote">${x[4]}</div>`:""}</div>`).join("");const talkingHtml="<div class=\"talkingPoints\">"+(talkingPoints[s[0]]||[]).map(function(x){return "<div class=\"talkBlock\"><div class=\"talkPriority "+(x[0]===\"MUST ASK\"?\"must\":x[0]===\"SHOULD ASK\"?\"should\":\"nice\")+"\" >"+x[0]+"</div><div class=\"talkTitle\">"+x[1]+"</div><div class=\"talkText\">"+x[2]+"</div></div>";}).join("")+"</div>";
+const confirmed=a.filter(x=>/confirmed/i.test(x[3])).length;
+const acknowledged=a.filter(x=>/acknowledged|response received/i.test(x[3])).length;
+const rows=a.map(x=>`<div class="actionRow"><div class="actionTop"><div><div class="actionTitle">${x[0]}</div><div class="actionMeta">${x[1]}<br>${x[2]}</div></div><span class="statusPill ${/confirmed/i.test(x[3])?"confirmed":/declined/i.test(x[3])?"declined":(/acknowledged|response received|confirmed opportunity/i.test(x[3]))?"acknowledged":"pending"}">${x[3]}</span></div>${x[4]?`<div class="responseNote">${x[4]}</div>`:""}</div>`).join("");const talkingHtml="<div class=\"talkingPoints\">"+(talkingPoints[s[0]]||[]).map(function(x){return "<div class=\"talkBlock\"><div class=\"talkPriority "+(x[0]==="MUST ASK"?"must":x[0]==="SHOULD ASK"?"should":"nice")+"\">"+x[0]+"</div><div class=\"talkTitle\">"+x[1]+"</div><div class=\"talkText\">"+x[2]+"</div></div>";}).join("")+"</div>";
 const photos={
 UNF:"https://digitalcommons.unf.edu/buildings/1391/preview.jpg",
 Flagler:"https://www.flagler.edu/sites/default/files/styles/short_hero/public/t4/media/content-types/inner-page-banners/just-image-1280-x-470/banner-Ponce-Courtyard-full-size.jpg.webp?h=d60736f3&itok=TMiNBJqY",
