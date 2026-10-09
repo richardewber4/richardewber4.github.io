@@ -174,11 +174,28 @@ return rows.map(x=>'<div class="scheduleRow"><div class="roundIcon">'+x[0]+'</di
 function home(){
 const key=tripTodayKey();
 const inTrip=!!dailySchedule[key];
-const displayKey=inTrip?key:"2026-10-08";
 const label=inTrip?formatTripDate(key):"Trip complete";
 const schedule=inTrip?scheduleRows(key):'<div class="small">The scheduled campus-visit portion of the trip is complete. Use Days, Schools, Hotels, Cars, Flights, or Map below to review the itinerary.</div>';
-const next=(key==="2026-10-08")?"12:00 PM":"See itinerary";
-document.getElementById("app").innerHTML='<div class="hero"><div class="campusArt" style="background-image:url(https://digitalcommons.unf.edu/buildings/1391/preview.jpg);background-size:cover;background-position:center"></div><div><span class="kicker">NEXT UP</span><h2>UNF — Campus Visit</h2><div class="detail"><div>🗓️ <b>Thu, Oct 8</b> &nbsp;•&nbsp; 10:00 AM – 12:00 PM</div><div>📍 Welcome Center, Building 10<br>&nbsp;&nbsp;&nbsp;&nbsp;1 UNF Drive, Jacksonville, FL 32224</div><div>🚙 <b>Parking:</b> Arena Garage (Bldg 38), 3rd or 4th floor</div></div><div class="housing">🏠 <b>Housing is a priority at every school</b><br>Junior transfer housing is a go/no-go question.</div><a class="photoLink" href="https://digitalcommons.unf.edu/buildings/382/" target="_blank" rel="noopener">View official UNF campus photo ↗</a><button class="primary" onclick="school(0)">View Details →</button></div><div class="leave">⏰<span>Next commitment<strong>'+next+'</strong><small>UNF Housing · Kyle Patterson</small></span></div></div><div class="below"><div class="panel"><h3>🗓️ Today’s Schedule <span style="float:right;font-size:13px;color:var(--muted)">'+label+'</span></h3>'+schedule+'</div><div class="panel highlights"><h3>⭐ Trip Highlights</h3><div class="check"><i>✓</i><span>5 campus visits<br><small>(UNF, Flagler, UTampa, USF, CCU)</small></span></div><div class="check"><i>✓</i><span>3 hotel stays</span></div><div class="check"><i>✓</i><span>3 car rentals</span></div><div class="check"><i>✓</i><span>6 flights</span></div><div class="check"><i>✓</i><span>1 exciting next step</span></div><div class="signoff">You got this,<br>Quinto!<br>⌁⌁ ▲</div></div></div>';
+const commitments=[
+{at:"2026-10-09T09:30:00-04:00",title:"University of Tampa — Campus Visit",date:"Fri, Oct 9",time:"9:30 AM – 11:30 AM",place:"Plant Hall · Room 122",detail:"Official campus visit",school:2},
+{at:"2026-10-09T11:30:00-04:00",title:"UTampa Housing — Jody Vandivier",date:"Fri, Oct 9",time:"11:30 – 11:50 AM",place:"Vaughn 213",detail:"Housing office drop-in",school:2},
+{at:"2026-10-09T12:30:00-04:00",title:"USF — Campus Visit",date:"Fri, Oct 9",time:"12:30 – 1:45 PM",place:"Muma / campus · Transfer Student Success at 12:50 PM",detail:"Self-guided visit",school:3},
+{at:"2026-10-09T17:22:00-04:00",title:"American Airlines AA 1982",date:"Fri, Oct 9",time:"5:22 – 7:13 PM",place:"Tampa (TPA) → Charlotte (CLT)",detail:"Flight to Myrtle Beach"},
+{at:"2026-10-09T21:02:00-04:00",title:"American Airlines AA 1085",date:"Fri, Oct 9",time:"9:02 – 10:02 PM",place:"Charlotte (CLT) → Myrtle Beach (MYR)",detail:"Arrival and rental car pickup"},
+{at:"2026-10-10T10:00:00-04:00",title:"Coastal Carolina University — Campus Visit",date:"Sat, Oct 10",time:"10:00 AM – 12:00 PM",place:"Baxley Hall / Lib Jackson",detail:"Arrive by 9:30 AM",school:0},
+{at:"2026-10-10T15:40:00-04:00",title:"National Car Rental — Return",date:"Sat, Oct 10",time:"Around 3:40 PM",place:"Myrtle Beach Airport",detail:"Return before flight"},
+{at:"2026-10-10T16:44:00-04:00",title:"United UA 3402",date:"Sat, Oct 10",time:"4:44 – 6:20 PM",place:"Myrtle Beach (MYR) → Chicago O’Hare (ORD)",detail:"Trip ends on arrival at ORD"}
+];
+const nextEvent=commitments.find(e=>new Date(e.at).getTime()>=Date.now());
+const done=!nextEvent;
+const heroTitle=nextEvent?nextEvent.title:"Campus visit trip complete";
+const heroDate=nextEvent?nextEvent.date:"Oct 7–10, 2026";
+const heroTime=nextEvent?nextEvent.time:"All scheduled visits completed";
+const heroPlace=nextEvent?nextEvent.place:"Review the schools and visit notes below.";
+const heroDetail=nextEvent?nextEvent.detail:"Use the navigation to review your itinerary.";
+const heroImage=nextEvent&&nextEvent.school===2?"https://www.ut.edu/":nextEvent&&nextEvent.school===3?"https://www.usf.edu/":nextEvent&&nextEvent.school===0?"https://www.coastal.edu/":"https://digitalcommons.unf.edu/buildings/1391/preview.jpg";
+const schoolButton=nextEvent&&Number.isInteger(nextEvent.school)?'<button class="primary" onclick="school('+nextEvent.school+')">View Details →</button>':'';
+document.getElementById("app").innerHTML='<div class="hero"><div class="campusArt" style="background-image:url('+heroImage+');background-size:cover;background-position:center"></div><div><span class="kicker">'+(done?"TRIP UPDATE":"NEXT UP")+'</span><h2>'+heroTitle+'</h2><div class="detail"><div>🗓️ <b>'+heroDate+'</b> &nbsp;•&nbsp; '+heroTime+'</div><div>📍 '+heroPlace+'</div><div>'+heroDetail+'</div></div><div class="housing">🏠 <b>Housing is a priority at every school</b><br>Junior transfer housing is a go/no-go question.</div>'+schoolButton+'</div><div class="leave">⏰<span>Next commitment<strong>'+heroTime+'</strong><small>'+heroTitle+'</small></span></div></div><div class="below"><div class="panel"><h3>🗓️ Today’s Schedule <span style="float:right;font-size:13px;color:var(--muted)">'+label+'</span></h3>'+schedule+'</div><div class="panel highlights"><h3>⭐ Trip Highlights</h3><div class="check"><i>✓</i><span>5 campus visits<br><small>(UNF, Flagler, UTampa, USF, CCU)</small></span></div><div class="check"><i>✓</i><span>3 hotel stays</span></div><div class="check"><i>✓</i><span>3 car rentals</span></div><div class="check"><i>✓</i><span>6 flights</span></div><div class="check"><i>✓</i><span>1 exciting next step</span></div><div class="signoff">You got this,<br>Quinto!<br>⌁⌁ ▲</div></div></div>';
 }
 
 const translations={
